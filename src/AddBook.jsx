@@ -46,108 +46,69 @@
 
 // export default AddBook;
 import { useState, useEffect } from "react";
-import axios from "axios";
 
-function AddBook({ fetchBooks, selectedBook, setSelectedBook }) {
-  const [book, setBook] = useState({
-    title: "",
-    author: "",
-    category: "",
-    quantity: ""
-  });
+function AddBook({ addBook, books, editIndex, setEditIndex }) {
+
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [category, setCategory] = useState("");
+  const [quantity, setQuantity] = useState("");
 
   useEffect(() => {
-    if (selectedBook) {
-      setBook({
-        title: selectedBook.title,
-        author: selectedBook.author,
-        category: selectedBook.category,
-        quantity: selectedBook.quantity
-      });
+    if (editIndex !== null) {
+      const book = books[editIndex];
+      setTitle(book.title);
+      setAuthor(book.author);
+      setCategory(book.category);
+      setQuantity(book.quantity);
     }
-  }, [selectedBook]);
+  }, [editIndex]);
 
-  const handleChange = (e) => {
-    setBook({ ...book, [e.target.name]: e.target.value });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!title || !author || !category || !quantity) return;
+
+    addBook({ title, author, category, quantity });
+
+    setTitle("");
+    setAuthor("");
+    setCategory("");
+    setQuantity("");
   };
 
- const handleSubmit = (e) => {
-  e.preventDefault();
-
-  if (book.quantity <= 0) {
-    alert("Quantity must be greater than 0");
-    return;
-  }
-
-  if (selectedBook) {
-
-    axios.put(`http://localhost:8080/api/books/${selectedBook.bookId}`, {
-      ...book,
-      availableQuantity: book.quantity
-    })
-    .then(() => {
-      alert("Book Updated Successfully");
-      setSelectedBook(null);
-      fetchBooks();
-    });
-
-  } else {
-
-    axios.post("http://localhost:8080/api/books", {
-      ...book,
-      availableQuantity: book.quantity
-    })
-    .then(() => {
-      alert("Book Added Successfully");
-      setBook({ title: "", author: "", category: "", quantity: "" });
-      fetchBooks();
-    });
-
-  }
-};
-
   return (
-    <div className="add-book-container">
-      <h3>Add Book</h3>
-      <form onSubmit={handleSubmit} className="book-form">
+    <form onSubmit={handleSubmit}>
 
-        <input
-          name="title"
-          placeholder="Title"
-          value={book.title}
-          onChange={handleChange}
-          required
-        />
+      <input
+        placeholder="Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
 
-        <input
-          name="author"
-          placeholder="Author"
-          value={book.author}
-          onChange={handleChange}
-          required
-        />
+      <input
+        placeholder="Author"
+        value={author}
+        onChange={(e) => setAuthor(e.target.value)}
+      />
 
-        <input
-          name="category"
-          placeholder="Category"
-          value={book.category}
-          onChange={handleChange}
-          required
-        />
+      <input
+        placeholder="Category"
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+      />
 
-        {/* ✅ New Quantity Field */}
-        <input
-          type="number"
-          name="quantity"
-          placeholder="Quantity"
-          value={book.quantity}
-          onChange={handleChange}
-          required
-        />
+      <input
+        placeholder="Quantity"
+        value={quantity}
+        onChange={(e) => setQuantity(e.target.value)}
+      />
 
-        <button type="submit">Add</button>
-      </form>
-    </div>
+      <button type="submit">
+        {editIndex !== null ? "Update" : "Add"}
+      </button>
+
+    </form>
   );
 }
 

@@ -32,20 +32,41 @@
 //   )
 // }
 
-import { useState } from "react";
-import axios from "axios";
+ import { useState, useEffect } from "react";
 import BookList from "./BookList";
 import AddBook from "./AddBook";
 
 function App() {
 
-  const [selectedBook, setSelectedBook] = useState(null);
   const [books, setBooks] = useState([]);
+  const [editIndex, setEditIndex] = useState(null);
 
-  const fetchBooks = () => {
-    axios.get("http://localhost:8080/api/books")
-      .then(res => setBooks(res.data))
-      .catch(err => console.error(err));
+  // load books from localStorage
+  useEffect(() => {
+    const savedBooks = localStorage.getItem("books");
+    if (savedBooks) {
+      setBooks(JSON.parse(savedBooks));
+    }
+  }, []);
+
+  // save books whenever updated
+  useEffect(() => {
+    localStorage.setItem("books", JSON.stringify(books));
+  }, [books]);
+
+  const addBook = (book) => {
+    if (editIndex !== null) {
+      const updated = books.map((b, i) => (i === editIndex ? book : b));
+      setBooks(updated);
+      setEditIndex(null);
+    } else {
+      setBooks([...books, book]);
+    }
+  };
+
+  const deleteBook = (index) => {
+    const updated = books.filter((_, i) => i !== index);
+    setBooks(updated);
   };
 
   return (
@@ -53,17 +74,17 @@ function App() {
       <h2>📚 Smart Library System</h2>
 
       <AddBook
-        selectedBook={selectedBook}
-        setSelectedBook={setSelectedBook}
-        fetchBooks={fetchBooks}
+        addBook={addBook}
+        books={books}
+        editIndex={editIndex}
+        setEditIndex={setEditIndex}
       />
 
       <BookList
         books={books}
-        fetchBooks={fetchBooks}
-        setSelectedBook={setSelectedBook}
+        deleteBook={deleteBook}
+        setEditIndex={setEditIndex}
       />
-
     </div>
   );
 }
