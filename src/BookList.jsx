@@ -98,14 +98,19 @@
 
 // export default BookList;
 
-function BookList({ books, deleteBook, setEditIndex }) {
+function BookList({ books, deleteBook, setEditIndex, search }) {
+  const filteredBooks = books.filter((book) =>
+    book.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+  
 
   return (
     <div>
 
       <h3>Book List</h3>
 
-      {books.length === 0 ? (
+      {filteredBooks.length === 0 ?  (
         <p>No Books Found</p>
       ) : (
 
@@ -123,7 +128,7 @@ function BookList({ books, deleteBook, setEditIndex }) {
 
           <tbody>
 
-            {books.map((book, index) => (
+           { filteredBooks.map((book, index) =>  (
               <tr key={index}>
 
                 <td>{book.title}</td>

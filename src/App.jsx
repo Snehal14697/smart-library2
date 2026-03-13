@@ -40,6 +40,7 @@ function App() {
 
   const [books, setBooks] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
+  const [search, setSearch] = useState("");
 
   // load books from localStorage
   useEffect(() => {
@@ -73,6 +74,13 @@ function App() {
     <div style={{ padding: "20px" }}>
       <h2>📚 Smart Library System</h2>
 
+      <input
+      type="text"
+      placeholder="Search Book"
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+    />
+
       <AddBook
         addBook={addBook}
         books={books}
@@ -84,6 +92,7 @@ function App() {
         books={books}
         deleteBook={deleteBook}
         setEditIndex={setEditIndex}
+         search={search}
       />
     </div>
   );

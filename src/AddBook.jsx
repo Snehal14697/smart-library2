@@ -65,17 +65,19 @@ function AddBook({ addBook, books, editIndex, setEditIndex }) {
   }, [editIndex]);
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!title || !author || !category || !quantity) return;
+  if (!title || !author || !category || !quantity) return;
 
-    addBook({ title, author, category, quantity });
+  addBook({ title, author, category, quantity });
 
-    setTitle("");
-    setAuthor("");
-    setCategory("");
-    setQuantity("");
-  };
+  alert("Book Added Successfully!");
+
+  setTitle("");
+  setAuthor("");
+  setCategory("");
+  setQuantity("");
+};
 
   return (
     <form onSubmit={handleSubmit}>
@@ -99,10 +101,11 @@ function AddBook({ addBook, books, editIndex, setEditIndex }) {
       />
 
       <input
-        placeholder="Quantity"
-        value={quantity}
-        onChange={(e) => setQuantity(e.target.value)}
-      />
+  type="number"
+  placeholder="Quantity"
+  value={quantity}
+  onChange={(e) => setQuantity(e.target.value)}
+/>
 
       <button type="submit">
         {editIndex !== null ? "Update" : "Add"}
