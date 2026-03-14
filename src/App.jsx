@@ -73,6 +73,7 @@ function App() {
   return (
     <div style={{ padding: "20px" }}>
       <h2>📚 Smart Library System</h2>
+      <h4>Total Books: {books.length}</h4>
 
       <input
       type="text"
