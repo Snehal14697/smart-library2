@@ -44,11 +44,14 @@ function App() {
 
   // load books from localStorage
   useEffect(() => {
-    const savedBooks = localStorage.getItem("books");
-    if (savedBooks) {
-      setBooks(JSON.parse(savedBooks));
-    }
-  }, []);
+  fetch("http://localhost:8080/books")
+    .then(res => res.json())
+    .then(data => {
+      console.log("API data:", data);
+      setBooks(data);
+    })
+    .catch(err => console.error(err));
+}, []);
 
   // save books whenever updated
   useEffect(() => {

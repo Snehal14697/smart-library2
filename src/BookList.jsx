@@ -116,7 +116,7 @@ function BookList({ books, deleteBook, setEditIndex, search }) {
     setTimeout(() => setMessage(""), 3000);
   };
 
-  // Filter books based on search and keep original index
+  
   const filteredBooks = books
     .map((book, index) => ({ ...book, originalIndex: index }))
     .filter((book) =>
