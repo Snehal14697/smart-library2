@@ -48,7 +48,6 @@
 import { useState, useEffect } from "react";
 
 function AddBook({ addBook, books, editIndex, setEditIndex }) {
-
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [category, setCategory] = useState("");
@@ -65,23 +64,32 @@ function AddBook({ addBook, books, editIndex, setEditIndex }) {
   }, [editIndex]);
 
   const handleSubmit = (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!title || !author || !category || !quantity) return;
+    if (!title || !author || !category || !quantity) return;
 
-  addBook({ title, author, category, quantity });
+    fetch("http://localhost:8080/books", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title, author, category, quantity }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        addBook(data);
+        alert("Book Added Successfully!");
+      })
+      .catch((err) => console.error(err));
 
-  alert("Book Added Successfully!");
-
-  setTitle("");
-  setAuthor("");
-  setCategory("");
-  setQuantity("");
-};
+    setTitle("");
+    setAuthor("");
+    setCategory("");
+    setQuantity("");
+  };
 
   return (
     <form onSubmit={handleSubmit}>
-
       <input
         placeholder="Title"
         value={title}
@@ -101,16 +109,15 @@ function AddBook({ addBook, books, editIndex, setEditIndex }) {
       />
 
       <input
-  type="number"
-  placeholder="Quantity"
-  value={quantity}
-  onChange={(e) => setQuantity(e.target.value)}
-/>
+        type="number"
+        placeholder="Quantity"
+        value={quantity}
+        onChange={(e) => setQuantity(e.target.value)}
+      />
 
       <button type="submit">
         {editIndex !== null ? "Update" : "Add"}
       </button>
-
     </form>
   );
 }

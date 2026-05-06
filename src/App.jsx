@@ -33,44 +33,42 @@
 // }
 
  import { useState, useEffect } from "react";
-import BookList from "./BookList";
 import AddBook from "./AddBook";
+import BookList from "./BookList";
 
 function App() {
-
   const [books, setBooks] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
   const [search, setSearch] = useState("");
 
-  // load books from localStorage
+  // ✅ Fetch books from backend
   useEffect(() => {
-  fetch("http://localhost:8080/books")
-    .then(res => res.json())
-    .then(data => {
-      console.log("API data:", data);
-      setBooks(data);
-    })
-    .catch(err => console.error(err));
-}, []);
+    fetch("http://localhost:8080/books")
+      .then(res => res.json())
+      .then(data => {
+        console.log("API data:", data);
+        setBooks(data);
+      })
+      .catch(err => console.error(err));
+  }, []);
 
-  // save books whenever updated
-  useEffect(() => {
-    localStorage.setItem("books", JSON.stringify(books));
-  }, [books]);
+  // ❌ localStorage remove केले
 
   const addBook = (book) => {
-    if (editIndex !== null) {
-      const updated = books.map((b, i) => (i === editIndex ? book : b));
-      setBooks(updated);
-      setEditIndex(null);
-    } else {
-      setBooks([...books, book]);
-    }
+    setBooks([...books, book]);
   };
 
   const deleteBook = (index) => {
-    const updated = books.filter((_, i) => i !== index);
-    setBooks(updated);
+    const bookId = books[index].id;
+
+    fetch(`http://localhost:8080/books/${bookId}`, {
+      method: "DELETE",
+    })
+      .then(() => {
+        const updated = books.filter((_, i) => i !== index);
+        setBooks(updated);
+      })
+      .catch(err => console.error(err));
   };
 
   return (
@@ -79,11 +77,11 @@ function App() {
       <h4>Total Books: {books.length}</h4>
 
       <input
-      type="text"
-      placeholder="Search Book"
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-    />
+        type="text"
+        placeholder="Search Book"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
 
       <AddBook
         addBook={addBook}
@@ -96,7 +94,7 @@ function App() {
         books={books}
         deleteBook={deleteBook}
         setEditIndex={setEditIndex}
-         search={search}
+        search={search}
       />
     </div>
   );

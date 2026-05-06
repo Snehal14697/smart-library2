@@ -102,38 +102,34 @@ import React, { useState } from "react";
 function BookList({ books, deleteBook, setEditIndex, search }) {
   const [message, setMessage] = useState("");
 
-  // Delete handler
   const handleDelete = (index) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this book?"
-    );
+    const confirmDelete = window.confirm("Delete this book?");
     if (confirmDelete) {
       deleteBook(index);
-      setMessage("Book deleted successfully ✅");
-    } else {
-      setMessage("Delete cancelled ❌");
+      setMessage("Book deleted ✅");
     }
-    setTimeout(() => setMessage(""), 3000);
+    setTimeout(() => setMessage(""), 2000);
   };
 
-  
+  // ✅ FIXED SEARCH
   const filteredBooks = books
     .map((book, index) => ({ ...book, originalIndex: index }))
     .filter((book) =>
-      book.title.toLowerCase().includes(search.toLowerCase())
+      (book.title || "")
+        .toLowerCase()
+        .includes(search.toLowerCase())
     );
 
   return (
     <div>
       <h3>Book List</h3>
-      {message && (
-        <p style={{ color: "green", fontWeight: "bold" }}>{message}</p>
-      )}
+
+      {message && <p>{message}</p>}
 
       {filteredBooks.length === 0 ? (
         <p>No Books Found</p>
       ) : (
-        <table border="1" cellPadding="10">
+        <table border="1">
           <thead>
             <tr>
               <th>Title</th>
@@ -152,15 +148,11 @@ function BookList({ books, deleteBook, setEditIndex, search }) {
                 <td>{book.category}</td>
                 <td>{book.quantity}</td>
                 <td>
-                  <button
-                    onClick={() => setEditIndex(book.originalIndex)}
-                  >
-                    ✏️ Edit
+                  <button onClick={() => setEditIndex(book.originalIndex)}>
+                    Edit
                   </button>
-                  <button
-                    onClick={() => handleDelete(book.originalIndex)}
-                  >
-                    🗑️ Delete
+                  <button onClick={() => handleDelete(book.originalIndex)}>
+                    Delete
                   </button>
                 </td>
               </tr>
