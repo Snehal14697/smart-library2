@@ -97,21 +97,91 @@
 // }
 
 // export default BookList;
+// import React, { useState } from "react";
+
+// function BookList({ books, deleteBook, setEditIndex, search }) {
+//   const [message, setMessage] = useState("");
+
+//   const handleDelete = (index) => {
+//     const confirmDelete = window.confirm("Delete this book?");
+//     if (confirmDelete) {
+//       deleteBook(index);
+//       setMessage("Book deleted ✅");
+//     }
+//     setTimeout(() => setMessage(""), 2000);
+//   };
+
+//   // ✅ FIXED SEARCH
+//   const filteredBooks = books
+//     .map((book, index) => ({ ...book, originalIndex: index }))
+//     .filter((book) =>
+//       (book.title || "")
+//         .toLowerCase()
+//         .includes(search.toLowerCase())
+//     );
+
+//   return (
+//     <div>
+//       <h3>Book List</h3>
+
+//       {message && <p>{message}</p>}
+
+//       {filteredBooks.length === 0 ? (
+//         <p>No Books Found</p>
+//       ) : (
+//         <table border="1">
+//           <thead>
+//             <tr>
+//               <th>Title</th>
+//               <th>Author</th>
+//               <th>Category</th>
+//               <th>Quantity</th>
+//               <th>Action</th>
+//             </tr>
+//           </thead>
+
+//           <tbody>
+//             {filteredBooks.map((book) => (
+//               <tr key={book.originalIndex}>
+//                 <td>{book.title}</td>
+//                 <td>{book.author}</td>
+//                 <td>{book.category}</td>
+//                 <td>{book.quantity}</td>
+//                 <td>
+//                   <button onClick={() => setEditIndex(book.originalIndex)}>
+//                     Edit
+//                   </button>
+//                   <button onClick={() => handleDelete(book.originalIndex)}>
+//                     Delete
+//                   </button>
+//                 </td>
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       )}
+//     </div>
+//   );
+// }
+
+// export default BookList;
+
 import React, { useState } from "react";
 
 function BookList({ books, deleteBook, setEditIndex, search }) {
   const [message, setMessage] = useState("");
 
   const handleDelete = (index) => {
-    const confirmDelete = window.confirm("Delete this book?");
+    const confirmDelete = window.confirm("Are you sure you want to delete?");
     if (confirmDelete) {
       deleteBook(index);
-      setMessage("Book deleted ✅");
+      setMessage("Book deleted successfully ✅");
+    } else {
+      setMessage("Delete cancelled ❌");
     }
     setTimeout(() => setMessage(""), 2000);
   };
 
-  // ✅ FIXED SEARCH
   const filteredBooks = books
     .map((book, index) => ({ ...book, originalIndex: index }))
     .filter((book) =>
@@ -124,12 +194,12 @@ function BookList({ books, deleteBook, setEditIndex, search }) {
     <div>
       <h3>Book List</h3>
 
-      {message && <p>{message}</p>}
+      {message && <p style={{ color: "green" }}>{message}</p>}
 
       {filteredBooks.length === 0 ? (
         <p>No Books Found</p>
       ) : (
-        <table border="1">
+        <table border="1" cellPadding="10">
           <thead>
             <tr>
               <th>Title</th>
@@ -148,11 +218,14 @@ function BookList({ books, deleteBook, setEditIndex, search }) {
                 <td>{book.category}</td>
                 <td>{book.quantity}</td>
                 <td>
+                  {/* ✏️ EDIT */}
                   <button onClick={() => setEditIndex(book.originalIndex)}>
-                    Edit
+                    ✏️ Edit
                   </button>
+
+                  {/* 🗑️ DELETE */}
                   <button onClick={() => handleDelete(book.originalIndex)}>
-                    Delete
+                    🗑️ Delete
                   </button>
                 </td>
               </tr>

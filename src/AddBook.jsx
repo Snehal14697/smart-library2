@@ -64,16 +64,40 @@ function AddBook({ addBook, books, editIndex, setEditIndex }) {
   }, [editIndex]);
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!title || !author || !category || !quantity) return;
+  if (!title || !author || !category || !quantity) return;
 
-    fetch("http://localhost:8080/books", {
+  const bookData = { title, author, category, quantity };
+
+  // UPDATE
+  if (editIndex !== null) {
+
+    const bookId = books[editIndex].bookId;
+
+    fetch(`http://localhost:8080/api/books/${bookId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bookData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        alert("Book Updated Successfully!");
+        setEditIndex(null);
+      })
+      .catch((err) => console.error(err));
+
+  } else {
+
+    // ADD
+    fetch("http://localhost:8080/api/books", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, author, category, quantity }),
+      body: JSON.stringify(bookData),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -81,13 +105,13 @@ function AddBook({ addBook, books, editIndex, setEditIndex }) {
         alert("Book Added Successfully!");
       })
       .catch((err) => console.error(err));
+  }
 
-    setTitle("");
-    setAuthor("");
-    setCategory("");
-    setQuantity("");
-  };
-
+  setTitle("");
+  setAuthor("");
+  setCategory("");
+  setQuantity("");
+};
   return (
     <form onSubmit={handleSubmit}>
       <input

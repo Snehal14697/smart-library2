@@ -43,7 +43,7 @@ function App() {
 
   // ✅ Fetch books from backend
   useEffect(() => {
-    fetch("http://localhost:8080/books")
+     fetch("http://localhost:8080/api/books") 
       .then(res => res.json())
       .then(data => {
         console.log("API data:", data);
@@ -59,9 +59,9 @@ function App() {
   };
 
   const deleteBook = (index) => {
-    const bookId = books[index].id;
+    const bookId = books[index].bookid;
 
-    fetch(`http://localhost:8080/books/${bookId}`, {
+    fetch(`http://localhost:8080/api/books/${bookId}`, {
       method: "DELETE",
     })
       .then(() => {
