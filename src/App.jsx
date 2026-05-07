@@ -43,23 +43,30 @@ function App() {
 
   // ✅ Fetch books from backend
   useEffect(() => {
-     fetch("http://localhost:8080/api/books") 
-      .then(res => res.json())
-      .then(data => {
+    fetch("http://localhost:8080/api/books")
+      .then((res) => res.json())
+      .then((data) => {
         console.log("API data:", data);
         setBooks(data);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   }, []);
 
-  // ❌ localStorage remove केले
-
+  // ✅ Add Book
   const addBook = (book) => {
     setBooks([...books, book]);
   };
 
+  // ✅ Update Book
+  const updateBook = (updatedBook, index) => {
+    const updatedBooks = [...books];
+    updatedBooks[index] = updatedBook;
+    setBooks(updatedBooks);
+  };
+
+  // ✅ Delete Book
   const deleteBook = (index) => {
-    const bookId = books[index].bookid;
+    const bookId = books[index].bookId;
 
     fetch(`http://localhost:8080/api/books/${bookId}`, {
       method: "DELETE",
@@ -68,12 +75,13 @@ function App() {
         const updated = books.filter((_, i) => i !== index);
         setBooks(updated);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   };
 
   return (
     <div style={{ padding: "20px" }}>
       <h2>📚 Smart Library System</h2>
+
       <h4>Total Books: {books.length}</h4>
 
       <input
@@ -85,6 +93,7 @@ function App() {
 
       <AddBook
         addBook={addBook}
+        updateBook={updateBook}
         books={books}
         editIndex={editIndex}
         setEditIndex={setEditIndex}

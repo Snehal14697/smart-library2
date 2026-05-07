@@ -45,88 +45,219 @@
 // }
 
 // export default AddBook;
+// import { useState, useEffect } from "react";
+
+// function AddBook({ addBook, books, editIndex, setEditIndex }) {
+//   const [title, setTitle] = useState("");
+//   const [author, setAuthor] = useState("");
+//   const [category, setCategory] = useState("");
+//   const [quantity, setQuantity] = useState("");
+
+//   useEffect(() => {
+//     if (editIndex !== null) {
+//       const book = books[editIndex];
+//       setTitle(book.title);
+//       setAuthor(book.author);
+//       setCategory(book.category);
+//       setQuantity(book.quantity);
+//     }
+//   }, [editIndex]);
+
+//   const handleSubmit = (e) => {
+//   e.preventDefault();
+
+//   if (!title || !author || !category || !quantity) return;
+
+//   const bookData = { title, author, category, quantity };
+
+//   // UPDATE
+//   if (editIndex !== null) {
+
+//     const bookId = books[editIndex].bookId;
+
+//     fetch(`http://localhost:8080/api/books/${bookId}`, {
+//       method: "PUT",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(bookData),
+//     })
+//       .then((res) => res.json())
+//       .then((data) => {
+//         alert("Book Updated Successfully!");
+//         setEditIndex(null);
+//       })
+//       .catch((err) => console.error(err));
+
+//   } else {
+
+//     // ADD
+//     fetch("http://localhost:8080/api/books", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(bookData),
+//     })
+//       .then((res) => res.json())
+//       .then((data) => {
+//         addBook(data);
+//         alert("Book Added Successfully!");
+//       })
+//       .catch((err) => console.error(err));
+//   }
+
+//   setTitle("");
+//   setAuthor("");
+//   setCategory("");
+//   setQuantity("");
+// };
+//   return (
+//     <form onSubmit={handleSubmit}>
+//       <input
+//         placeholder="Title"
+//         value={title}
+//         onChange={(e) => setTitle(e.target.value)}
+//       />
+
+//       <input
+//         placeholder="Author"
+//         value={author}
+//         onChange={(e) => setAuthor(e.target.value)}
+//       />
+
+//       <input
+//         placeholder="Category"
+//         value={category}
+//         onChange={(e) => setCategory(e.target.value)}
+//       />
+
+//       <input
+//         type="number"
+//         placeholder="Quantity"
+//         value={quantity}
+//         onChange={(e) => setQuantity(e.target.value)}
+//       />
+
+//       <button type="submit">
+//         {editIndex !== null ? "Update" : "Add"}
+//       </button>
+//     </form>
+//   );
+// }
+
+// export default AddBook;
 import { useState, useEffect } from "react";
 
-function AddBook({ addBook, books, editIndex, setEditIndex }) {
+function AddBook({
+  addBook,
+  updateBook,
+  books,
+  editIndex,
+  setEditIndex,
+}) {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [category, setCategory] = useState("");
   const [quantity, setQuantity] = useState("");
 
+  // ✅ Edit mode data fill
   useEffect(() => {
     if (editIndex !== null) {
       const book = books[editIndex];
+
       setTitle(book.title);
       setAuthor(book.author);
       setCategory(book.category);
       setQuantity(book.quantity);
     }
-  }, [editIndex]);
+  }, [editIndex, books]);
 
+  // ✅ Form Submit
   const handleSubmit = (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!title || !author || !category || !quantity) return;
+    if (!title || !author || !category || !quantity) {
+      alert("Please fill all fields");
+      return;
+    }
 
-  const bookData = { title, author, category, quantity };
+    const bookData = {
+      title,
+      author,
+      category,
+      quantity,
+    };
 
-  // UPDATE
-  if (editIndex !== null) {
+    // ✅ UPDATE BOOK
+    if (editIndex !== null) {
+      const bookId = books[editIndex].bookId;
 
-    const bookId = books[editIndex].bookId;
-
-    fetch(`http://localhost:8080/api/books/${bookId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(bookData),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        alert("Book Updated Successfully!");
-        setEditIndex(null);
+      fetch(`http://localhost:8080/api/books/${bookId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookData),
       })
-      .catch((err) => console.error(err));
+        .then((res) => res.json())
+        .then((data) => {
+          updateBook(data, editIndex);
 
-  } else {
+          alert("Book Updated Successfully!");
 
-    // ADD
-    fetch("http://localhost:8080/api/books", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(bookData),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        addBook(data);
-        alert("Book Added Successfully!");
+          setEditIndex(null);
+
+          setTitle("");
+          setAuthor("");
+          setCategory("");
+          setQuantity("");
+        })
+        .catch((err) => console.error(err));
+
+    } else {
+
+      // ✅ ADD BOOK
+      fetch("http://localhost:8080/api/books", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookData),
       })
-      .catch((err) => console.error(err));
-  }
+        .then((res) => res.json())
+        .then((data) => {
+          addBook(data);
 
-  setTitle("");
-  setAuthor("");
-  setCategory("");
-  setQuantity("");
-};
+          alert("Book Added Successfully!");
+
+          setTitle("");
+          setAuthor("");
+          setCategory("");
+          setQuantity("");
+        })
+        .catch((err) => console.error(err));
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <input
+        type="text"
         placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
 
       <input
+        type="text"
         placeholder="Author"
         value={author}
         onChange={(e) => setAuthor(e.target.value)}
       />
 
       <input
+        type="text"
         placeholder="Category"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
@@ -140,7 +271,7 @@ function AddBook({ addBook, books, editIndex, setEditIndex }) {
       />
 
       <button type="submit">
-        {editIndex !== null ? "Update" : "Add"}
+        {editIndex !== null ? "Update Book" : "Add Book"}
       </button>
     </form>
   );
